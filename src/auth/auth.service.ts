@@ -1,4 +1,5 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
 import { Register } from '../interface/userInterface';
@@ -6,24 +7,35 @@ import { UserService } from '../user/user.service';
 
 @Injectable()
 export class AuthService {
-    constructor(private userService: UserService) { }
+    constructor(private userService: UserService,) { }
+    private readonly logger = new Logger(AuthService.name);
 
-    async login(loginData: Register) {
+    @Inject(ConfigService)
+    public config: ConfigService;
+
+    async login(loginData: Register): Promise<any> {
         try {
             let user = await this.userService.findByLogin(loginData.email);
-              if (user) {
+            if (user) {
                 if (bcrypt.compareSync(loginData.password, user.password)) {
                     return user;
                 }
                 else {
-                    throw new HttpException("Authentication failed", HttpStatus.BAD_REQUEST,)
+                    throw new Error(this.config.get('AUTH_FAILED'));
                 }
             }
             else {
-                throw new HttpException("User not exist", HttpStatus.BAD_REQUEST,)
+                throw new Error(this.config.get('USER_NOT_EXIST'));
             }
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST,)
+            this.logger.error(error);
+            throw new Error(error);
+            // throw new HttpException({
+            //     status: HttpStatus.FORBIDDEN,
+            //     error: 'This is a custom message',
+            //   }, HttpStatus.FORBIDDEN, {
+            //     cause: error
+            //   });
         }
 
     }

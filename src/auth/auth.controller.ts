@@ -1,4 +1,5 @@
-import { Controller, Post, Body, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, Res, HttpStatus, Req, Logger, HttpCode, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 // types for data
 import { Register, Payload } from '../interface/userInterface';
@@ -15,33 +16,41 @@ export class AuthController {
         private authService: AuthService,
 
     ) { }
+    private readonly logger = new Logger(AuthController.name);
+
+    @Inject(ConfigService)
+    public config: ConfigService;
 
     @Post('register')
-    async register(@Res() response: any, @Body() userData: Register) {
+    @HttpCode(204)
+    async register(@Req() request: Object, @Res() response: any, @Body() userData: Register): Promise<JSON> {
         try {
             const user = await this.userService.create(userData);
             const payload: Payload = {
                 email: user.email,
             };
             return response.status(HttpStatus.CREATED).json({
-                message: 'User has been created successfully',
+                message: this.config.get("SUCCES_MESSAGE"),
                 data: payload
             });;
         } catch (error) {
+            this.logger.error(error);
             return response.status(HttpStatus.BAD_REQUEST).json({ error })
         }
 
     }
 
     @Post('login')
-    async login(@Res() response: any, @Body() loginData: Register) {
+    @HttpCode(204)
+    async login(@Req() request: Object, @Res() response: any, @Body() loginData: Register): Promise<JSON> {
         try {
             await this.authService.login(loginData);
-            return response.status(HttpStatus.CREATED).json({
-                message: 'Authentication Success',
+            return response.status(HttpStatus.OK).json({
+                message: this.config.get("SUCCES_MESSAGE"),
                 data: {}
             });;
         } catch (error) {
+            this.logger.error(error);
             return response.status(HttpStatus.BAD_REQUEST).json({ error })
         }
     }

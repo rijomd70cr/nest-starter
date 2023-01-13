@@ -1,4 +1,5 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, Logger, Inject } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
@@ -8,14 +9,18 @@ import { Register, User } from '../interface/userInterface';
 @Injectable()
 export class UserService {
     constructor(@InjectModel('User') private userModel: Model<User>) { }
+    private readonly logger = new Logger(UserService.name);
+
+    @Inject(ConfigService)
+    public config: ConfigService;
 
     // crreate user 
-    async create(userData: Register) {
+    async create(userData: Register): Promise<any> {
         try {
             const { email } = userData;
             const user = await this.userModel.findOne({ email });
             if (user) {
-                throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+                throw new Error(this.config.get('USER_NOT_EXIST'));
             } else {
                 const saltOrRounds = 10;
                 const salt = bcrypt.genSaltSync(saltOrRounds);
@@ -27,17 +32,19 @@ export class UserService {
                 return createdUser;
             }
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST,)
+            this.logger.error(error);
+            throw new Error(error);
         }
     }
 
     // find one item
-    async findByLogin(emailId: string) {
+    async findByLogin(emailId: string): Promise<any> {
         try {
             const user = await this.userModel.findOne({ email: emailId }).select('username password');
             return user;
         } catch (error) {
-            throw new HttpException(error, HttpStatus.BAD_REQUEST,)
+            this.logger.error(error);
+            throw new Error(error);
         }
     }
 
