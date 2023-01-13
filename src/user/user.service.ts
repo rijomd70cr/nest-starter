@@ -1,28 +1,30 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common/exceptions';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
-import {  User } from '../interface/userInterface';
-import { Register } from './user.dto';
+import { IUser } from '../interface/userInterface';
+import { UserDecerotorDocument } from '../schema/userDecerotorSchema';
+import { RegisterDto } from './user.dto';
 
 
 @Injectable()
 export class UserService {
-    constructor(@InjectModel('User') private userModel: Model<User>) { }
+    constructor(@InjectModel('User') private userModel: Model<IUser>, @InjectModel('User') private userDeceratorModel: Model<UserDecerotorDocument>) { }
     private readonly logger = new Logger(UserService.name);
 
     @Inject(ConfigService)
     public config: ConfigService;
 
     // crreate user 
-    async create(userData: Register): Promise<any> {
+    async create(userData: RegisterDto): Promise<IUser> {
         try {
             const { email } = userData;
             const user = await this.userModel.findOne({ email });
             if (user) {
-                throw new Error(this.config.get('USER_NOT_EXIST'));
+                throw new NotFoundException(this.config.get('USER_NOT_EXIST'));
             } else {
                 const saltOrRounds = 10;
                 const salt = bcrypt.genSaltSync(saltOrRounds);
@@ -40,7 +42,7 @@ export class UserService {
     }
 
     // find one item
-    async findByLogin(emailId: string): Promise<any> {
+    async findByLogin(emailId: string): Promise<IUser> {
         try {
             const user = await this.userModel.findOne({ email: emailId }).select('username password');
             return user;

@@ -1,6 +1,6 @@
 import { Document } from 'mongoose';
 
-export interface Address {
+export interface IAddress {
     addr1: string;
     city: string;
     state: string;
@@ -8,10 +8,10 @@ export interface Address {
     zip: number;
 }
 // for user modal in service class 
-export interface User extends Document {
+export interface IUser extends Document {
     email: string;
     readonly password: string;
-    address: Address;
+    address: IAddress;
     created: Date;
     // refOther:User
 }

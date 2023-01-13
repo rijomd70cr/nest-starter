@@ -1,8 +1,11 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
+import { NotFoundException } from '@nestjs/common/exceptions';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
-import { Register } from './auth.dto';
+import { RegisterDto } from './auth.dto';
+import { IUser } from '../interface/userInterface';
+
 import { UserService } from '../user/user.service';
 
 @Injectable()
@@ -13,7 +16,7 @@ export class AuthService {
     @Inject(ConfigService)
     public config: ConfigService;
 
-    async login(loginData: Register): Promise<any> {
+    async login(loginData: RegisterDto): Promise<IUser> {
         try {
             let user = await this.userService.findByLogin(loginData.email);
             if (user) {
@@ -25,7 +28,7 @@ export class AuthService {
                 }
             }
             else {
-                throw new Error(this.config.get('USER_NOT_EXIST'));
+                throw new NotFoundException(this.config.get('USER_NOT_EXIST'));
             }
         } catch (error) {
             this.logger.error(error);
