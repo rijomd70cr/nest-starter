@@ -10,7 +10,7 @@ export interface Address {
 }
 // for user modal in service class 
 export interface User extends Document {
-    username: string;
+    email: string;
     readonly password: string;
     address: Address;
     created: Date;
@@ -18,27 +18,10 @@ export interface User extends Document {
 }
 // for register data in controll and service 
 export interface Register {
-    username: string;
+    email: string;
     password: string;
-    address?: Address;
 }
 export interface Payload {
-    username: string;
-    address?: Address;
+    email: string;
 }
 
-// ****************************
-export interface Example extends Document {
-    name: string;
-    roleNumber: number;
-    class: number;
-    gender: string;
-    address: Address;
-}
-export interface RegisterExample {
-    name: string;
-    roleNumber: number;
-    class: number;
-    gender: string;
-}
-// ****************************
