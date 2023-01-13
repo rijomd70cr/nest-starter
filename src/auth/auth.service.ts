@@ -2,7 +2,7 @@ import { Injectable, Logger, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 
-import { Register } from '../interface/userInterface';
+import { Register } from './auth.dto';
 import { UserService } from '../user/user.service';
 
 @Injectable()

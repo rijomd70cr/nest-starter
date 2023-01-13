@@ -2,7 +2,7 @@ import { Controller, Post, Body, Res, HttpStatus, Req, Logger, HttpCode, Inject 
 import { ConfigService } from '@nestjs/config';
 
 // types for data
-import { Register, Payload } from '../interface/userInterface';
+import { Register, Payload } from './auth.dto';
 
 // service calling 
 import { UserService } from '../user/user.service';
