@@ -1,5 +1,5 @@
 import { Injectable, Logger, Inject } from '@nestjs/common';
-import { NotFoundException } from '@nestjs/common/exceptions';
+import { NotAcceptableException } from '@nestjs/common/exceptions';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -19,12 +19,12 @@ export class UserService {
     public config: ConfigService;
 
     // crreate user 
-    async create(userData: RegisterDto): Promise<IUser> {
+    async createUser(userData: RegisterDto): Promise<IUser> {
         try {
             const { email } = userData;
             const user = await this.userModel.findOne({ email });
             if (user) {
-                throw new NotFoundException(this.config.get('USER_NOT_EXIST'));
+                throw new NotAcceptableException(this.config.get('USER_EXIST'));
             } else {
                 const saltOrRounds = 10;
                 const salt = bcrypt.genSaltSync(saltOrRounds);
@@ -42,7 +42,7 @@ export class UserService {
     }
 
     // find one item
-    async findByLogin(emailId: string): Promise<IUser> {
+    async findByLogin(emailId: string): Promise<IUser | undefined> {
         try {
             const user = await this.userModel.findOne({ email: emailId }).select('username password');
             return user;
