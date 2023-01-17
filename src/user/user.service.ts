@@ -44,7 +44,7 @@ export class UserService {
     // find one item
     async findByLogin(emailId: string): Promise<IUser | undefined> {
         try {
-            const user = await this.userModel.findOne({ email: emailId }).select('username password');
+            const user = await this.userModel.findOne({ email: emailId }).select('email password');
             return user;
         } catch (error) {
             this.logger.error(error);

@@ -18,7 +18,7 @@ const envFilePath: string = getEnvPath(`${__dirname}/common/envs`);
 @Module({
   imports: [
     ConfigModule.forRoot({ envFilePath, isGlobal: true }),
-    MongooseModule.forRoot('mongodb://localhost:27017', { dbName: 'sample' }),
+    MongooseModule.forRoot('mongodb://127.0.0.1:27017', { dbName: 'sample' }),
     UserModule,
     AuthModule,
   ],
