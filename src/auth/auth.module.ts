@@ -17,7 +17,7 @@ import { jwtConstants } from './jwt-verify/auth.constants';
     imports: [UserModule, PassportModule,
         JwtModule.register({
             secret: jwtConstants.SECRET,
-            signOptions: { expiresIn: '3d' },
+            signOptions: { expiresIn: '1d' },
         }),
     ],
     controllers: [AuthController],

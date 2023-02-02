@@ -6,7 +6,8 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 
 // type of modal 
-import { IUser } from '../interface/userInterface';
+import { UserDocument } from '../schema/userDecerotorSchema';
+
 // service of user
 import { UserService } from '../user/user.service';
 
@@ -21,7 +22,7 @@ export class AuthService {
 
 
 
-    async validateUser(email: string, password: string): Promise<IUser | undefined> {
+    async validateUser(email: string, password: string): Promise<UserDocument | undefined> {
         let user = await this.userService.findByLogin(email);
         if (user) {
             if (bcrypt.compareSync(password, user.password)) {

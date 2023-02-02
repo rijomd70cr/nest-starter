@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory, raw } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 // import { refOther } from '../refOther/schemas/refOther.schema';
 
-export type UserDecerotorDocument = mongoose.HydratedDocument<UserDecerotor>;
+export type UserDocument = mongoose.HydratedDocument<User>;
 
 // export class Adress {
 //     @Prop()
@@ -16,29 +16,30 @@ export type UserDecerotorDocument = mongoose.HydratedDocument<UserDecerotor>;
 // }
 
 @Schema()
-export class UserDecerotor {
-    @Prop()
-    email: string;
+export class User {
+  @Prop()
+  email: string;
 
-    @Prop()
-    password: string;
+  @Prop()
+  password: string;
 
-    @Prop({ default: Date.now })
-    created: Date;
+  @Prop({ default: Date.now })
+  created: Date;
 
-    // @Prop()
-    // address: Adress;
+  // @Prop()
+  // address: Adress;
 
-    @Prop(raw({
-        addr1: { type: String },
-        city: { type: String },
-        zip: { type: Number },
-    }))
-    address: Record<string, any>;
+  @Prop(
+    raw({
+      addr1: { type: String },
+      city: { type: String },
+      zip: { type: Number },
+    }),
+  )
+  address: Record<string, any>;
 
-    // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'refOther' })
-    // owner: refOther
-
+  // @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'refOther' })
+  // owner: refOther
 }
 
-export const UserDecerotorSchema = SchemaFactory.createForClass(UserDecerotor);
+export const UserSchema = SchemaFactory.createForClass(User);
